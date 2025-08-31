@@ -1,0 +1,29 @@
+---
+import { baseUrl } from '@/utils/functions';
+const logo = baseUrl('/assets/gsap-logo.png');
+import Titulo from './Titulo.astro';
+---
+
+<section class='am-section'>
+  <img src={logo} alt='Logo' class='logo-img' />
+  <Titulo />
+</section>
+<style>
+  section {
+    height: 100vh;
+    transform-style: preserve-3d;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    place-content: center;
+    place-items: center;
+  }
+
+  .logo-img {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: 15vmax;
+  }
+</style>

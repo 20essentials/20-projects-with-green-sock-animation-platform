@@ -1,0 +1,75 @@
+<canvas></canvas>
+
+<style>
+  canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+  }
+</style>
+
+<script>
+  import { createNoise2D } from "simplex-noise";
+
+const canvas = document.querySelector("canvas") as HTMLCanvasElement;
+const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+const noise2d = createNoise2D();
+
+let width: number, height: number;
+
+function resize(): void {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+interface Particle {
+  x: number;
+  y: number;
+  hue: number;
+}
+
+// 🎇 Creamos partículas
+const numParticles = 1500;
+const particles: Particle[] = Array.from({ length: numParticles }, () => ({
+  x: Math.random() * width,
+  y: Math.random() * height,
+  hue: Math.random() * 360,
+}));
+
+let tick = 0;
+
+function animate(): void {
+  ctx.fillStyle = "rgba(0,0,0,0.1)";
+  ctx.fillRect(0, 0, width, height);
+
+  tick += 0.002;
+
+  for (let p of particles) {
+    // Dirección según ruido simplex
+    const n = noise2d(p.x * 0.001 + tick, p.y * 0.001 + tick);
+    const angle = n * Math.PI * 2;
+
+    // Movimiento
+    p.x += Math.cos(angle) * 1.5;
+    p.y += Math.sin(angle) * 1.5;
+
+    // Reaparecer si sale de pantalla
+    if (p.x < 0) p.x = width;
+    if (p.x > width) p.x = 0;
+    if (p.y < 0) p.y = height;
+    if (p.y > height) p.y = 0;
+
+    // Dibujo estilo “hilo de luz”
+    ctx.strokeStyle = `hsl(${(p.hue + tick * 500) % 360}, 100%, 60%)`;
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x - Math.cos(angle) * 2, p.y - Math.sin(angle) * 2);
+    ctx.stroke();
+  }
+
+  requestAnimationFrame(animate);
+}
+
+animate();</script>

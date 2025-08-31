@@ -1,0 +1,405 @@
+---
+import ButtonPunch from './ButtonPunch.astro';
+---
+
+<aside class='container-grid'>
+  <div class='pen-wrapper'>
+    <ButtonPunch />
+    <div class='tile-area'></div>
+  </div>
+
+  <div class='play-area'>
+    <div id='play-win-1' class='play-win play-win-1'></div>
+    <div id='play-win-2' class='play-win play-win-2'></div>
+    <div id='play-win-3' class='play-win play-win-3'></div>
+    <div id='play-win-4' class='play-win play-win-4'></div>
+  </div>
+</aside>
+
+<script>
+  import { baseUrl } from '@/utils/functions';
+  import { gsap } from 'gsap';
+  import Flip from 'gsap/Flip';
+
+  gsap.registerPlugin(Flip);
+
+  const arrayCards = [
+    {
+      title: 'Lambdas',
+      repo: 'https://github.com/20essentials/project-1080',
+      localImage: '/assets/project-1080.avif',
+      id: '001'
+    },
+    {
+      title: 'FadeIn',
+      repo: 'https://github.com/20essentials/project-1042',
+      localImage: '/assets/project-1042.avif',
+      id: '002'
+    },
+    {
+      title: 'SplitText Random',
+      repo: 'https://github.com/20essentials/project-1086',
+      localImage: '/assets/project-1086.avif',
+      id: '003'
+    },
+    {
+      title: 'Girante Flip',
+      repo: 'https://github.com/20essentials/project-1098',
+      localImage: '/assets/project-1098.avif',
+      id: '004'
+    },
+    {
+      title: 'Horinzontal Gallery',
+      repo: 'https://github.com/20essentials/project-1032',
+      localImage: '/assets/project-1032.avif',
+      id: '005'
+    },
+    {
+      title: 'Circle Slider',
+      repo: 'https://github.com/20essentials/project-1122',
+      localImage: '/assets/project-1122.avif',
+      id: '006'
+    },
+    {
+      title: 'Gta Prelanding',
+      repo: 'https://github.com/20essentials/project-1045',
+      localImage: '/assets/project-1045.avif',
+      id: '007'
+    },
+    {
+      title: 'Wave',
+      repo: 'https://github.com/20essentials/project-1125',
+      localImage: '/assets/project-1125.avif',
+      id: '008'
+    },
+    {
+      title: 'Vertical Slider',
+      repo: 'https://github.com/20essentials/project-1047',
+      localImage: '/assets/project-1047.avif',
+      id: '009'
+    },
+    {
+      title: '20 Projects With StyleX',
+      repo: 'https://github.com/20essentials/20-projects-with-stylex',
+      localImage: '/assets/20-projects-with-stylex.avif',
+      id: '010'
+    },
+    {
+      title: '20 Exercises Solved in LeetCode',
+      repo: 'https://github.com/20essentials/20-exercises-solved-in-leetcode',
+      localImage: '/assets/20-exercises-solved-in-leetcode.avif',
+      id: '011'
+    },
+    {
+      title: 'Enhance Grid',
+      repo: 'https://github.com/20essentials/project-1033',
+      localImage: '/assets/project-1033.avif',
+      id: '012'
+    },
+    {
+      title: 'Flip Simple',
+      repo: 'https://github.com/20essentials/project-1092',
+      localImage: '/assets/project-1092.avif',
+      id: '013'
+    },
+    {
+      title: 'Gallery',
+      repo: 'https://github.com/20essentials/project-1101',
+      localImage: '/assets/project-1101.avif',
+      id: '014'
+    },
+    {
+      title: 'Skew Flip Cards',
+      repo: 'https://github.com/20essentials/project-1160',
+      localImage: '/assets/project-1160.avif',
+      id: '015'
+    },
+    {
+      title: 'Custom Ease',
+      repo: 'https://github.com/20essentials/project-1036',
+      localImage: '/assets/project-1036.avif',
+      id: '016'
+    },
+    {
+      title: 'Galeria Transitiva',
+      repo: 'https://github.com/20essentials/project-1108',
+      localImage: '/assets/project-1108.avif',
+      id: '017'
+    },
+    {
+      title: '20 Projects With DbLocal',
+      repo: 'https://github.com/20essentials/20-projects-with-db-local',
+      localImage: '/assets/20-projects-with-db-local.avif',
+      id: '018'
+    },
+    {
+      title: 'Nested Flip',
+      repo: 'https://github.com/20essentials/project-1093',
+      localImage: '/assets/project-1093.avif',
+      id: '019'
+    },
+    {
+      title: 'Airpods',
+      repo: 'https://github.com/20essentials/project-1050',
+      localImage: '/assets/project-1050.avif',
+      id: '020'
+    }
+  ];
+
+  const TILES = 20;
+
+  const tileArea = document.querySelector<HTMLDivElement>(
+    '.tile-area'
+  ) as HTMLDivElement;
+  const playArea = document.querySelector<HTMLDivElement>(
+    '.play-area'
+  ) as HTMLDivElement;
+
+  const playWindows: (HTMLElement | null)[] = [
+    document.querySelector('#play-win-1'),
+    document.querySelector('#play-win-2'),
+    document.querySelector('#play-win-3'),
+    document.querySelector('#play-win-4')
+  ];
+
+  let gameState = 0;
+  let rand: number[] = [];
+
+  const button = document.querySelector<HTMLButtonElement>('.butt');
+  document.addEventListener('click', e => {
+    const target = e.target as HTMLElement;
+    if (target.matches('.am-img')) {
+      const anchor = target.dataset.anchor;
+      window.open(anchor, '_blank');
+      return;
+    }
+    if (target.matches('.butt') || target.matches('.butt *')) {
+      if (gameState === 0) {
+        rand = generateRandomNumbers(4, 0, TILES);
+        gameState = 1;
+      } else {
+        gameState = 0;
+      }
+
+      for (let i = 0; i < 4; i++) {
+        const tile = document.querySelector<HTMLDivElement>(`#tile-${rand[i]}`);
+        const tileWrapper = document.querySelector<HTMLDivElement>(
+          `.tile-${rand[i]}-wrapper`
+        );
+        if (!tile || !tileWrapper || !playWindows[i]) continue;
+
+        const state = Flip.getState(tile);
+
+        const parent = (
+          tile.parentElement === tileWrapper ? playWindows[i] : tileWrapper
+        ) as HTMLElement;
+
+        parent.appendChild(tile);
+
+        Flip.from(state, {
+          duration: 1,
+          scale: true,
+          stagger: 0.5,
+          ease: 'power1.inOut',
+          onComplete: () => {
+            if (i === 3) {
+              if (gameState === 1) {
+                checkWin();
+              }
+              if (gameState === 0) {
+                removeWinClass();
+              }
+            }
+          }
+        });
+      }
+    }
+  });
+
+  // ✅ Quitar la clase "win"
+  const removeWinClass = (): void => {
+    const cardsInTileArea = Array.from(
+      tileArea.querySelectorAll<HTMLDivElement>('[class^=tile]')
+    );
+    cardsInTileArea.forEach(card => {
+      card.classList.remove('win');
+    });
+  };
+
+  // ✅ Verificar si hay 4 iguales
+  const checkWin = (): void => {
+    const selectedCards = Array.from(
+      playArea.querySelectorAll<HTMLDivElement>('[class^=tile]')
+    );
+
+    if (selectedCards.length > 0) {
+      const selectedTypes = selectedCards.map(card => card.dataset.type);
+
+      const allEqual = selectedTypes.every(type => type === selectedTypes[0]);
+
+      if (allEqual) {
+        selectedCards.forEach(card => {
+          card.classList.add('win');
+        });
+      }
+    }
+  };
+
+  // ✅ Generar las cartas al cargar la ventana
+  window.onload = () => {
+    // Generamos todos los índices únicos de una sola vez
+    const randomIndices = generateRandomNumbers(TILES, 0, arrayCards.length);
+
+    for (let i = 0; i < TILES; i++) {
+      const tileWrapper = document.createElement('div');
+      tileWrapper.classList.add(`tile-${i}-wrapper`, 'tile-wrapper');
+
+      const tile = document.createElement('div');
+      tile.classList.add('tile');
+      tile.id = `tile-${i}`;
+
+      const randomIndex = randomIndices[i]; // tomar índice único
+      const { localImage, repo } = arrayCards[randomIndex];
+      tile.innerHTML = `<img data-anchor="${repo}" class="am-img" src="${localImage}" />`;
+      tile.dataset.type = randomIndex.toString();
+
+      tileWrapper.appendChild(tile);
+      tileArea.appendChild(tileWrapper);
+    }
+  };
+
+  // ✅ Función para generar números únicos aleatorios
+  const generateRandomNumbers = (
+    amount: number,
+    lowerBound: number,
+    upperBound: number
+  ): number[] => {
+    const pool = Array.from(
+      { length: upperBound - lowerBound },
+      (_, i) => i + lowerBound
+    );
+    const result: number[] = [];
+
+    while (result.length < amount && pool.length > 0) {
+      const randomIndex = Math.floor(Math.random() * pool.length);
+      result.push(pool.splice(randomIndex, 1)[0]);
+    }
+
+    return result;
+  };
+</script>
+
+<style is:global>
+  .container-grid {
+    position: relative;
+    height: 100vh;
+  }
+
+  :root {
+    --dark: #fff2;
+    --light: #f7edf0;
+    --accent: #7353ba;
+  }
+
+  .pen-wrapper {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .play-area {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .play-win {
+    width: 8.51vmax;
+    height: 8.51vmax;
+    border: 0.2vmax solid var(--dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    pointer-events: auto;
+
+    &.play-win-1 {
+      left: 1.5vmax;
+      top: 1.5vmax;
+    }
+
+    &.play-win-2 {
+      right: 1.5vmax;
+      top: 1.5vmax;
+    }
+
+    &.play-win-3 {
+      right: 1.5vmax;
+      bottom: 1.5vmax;
+    }
+
+    &.play-win-4 {
+      left: 1.5vmax;
+      bottom: 1.5vmax;
+    }
+  }
+
+  .win {
+    background-color: var(--accent);
+  }
+
+  .tile-area {
+    transform: rotateX(60deg) rotateY(0deg) rotateZ(45deg);
+    transform-style: preserve-3d;
+    width: 45.57vmax;
+    height: 39.06vmax;
+    padding: 1.04vmax;
+    border: 0.07vmax solid rgba(255, 255, 255, 0);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1vmax;
+
+    @media (width <= 1111px) and (orientation: portrait) {
+      zoom: 0.8;
+    }
+  }
+
+  .tile-wrapper {
+    width: 6.51vmax;
+    height: 6.51vmax;
+    
+    * {
+      pointer-events: none;
+    }
+  }
+
+  .tile {
+    width: 8.51vmax;
+    height: 8.51vmax;
+    border: 0.13vmax solid var(--dark);
+    font-size: 3.13vmax;
+    color: var(--dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .am-img {
+      width: 100%;
+      height: 100%;
+      border: none;
+      object-fit: cover;
+      pointer-events: auto;
+    }
+  }
+
+  .tile:hover {
+    transform: translate3d(0, 0, 0.33vmax);
+  }
+</style>
