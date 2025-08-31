@@ -260,7 +260,7 @@ import ButtonPunch from './ButtonPunch.astro';
 
       const randomIndex = randomIndices[i]; // tomar índice único
       const { localImage, repo } = arrayCards[randomIndex];
-      tile.innerHTML = `<img data-anchor="${repo}" class="am-img" src="${localImage}" />`;
+      tile.innerHTML = `<img data-anchor="${repo}" class="am-img" src="${baseUrl(localImage)}" />`;
       tile.dataset.type = randomIndex.toString();
 
       tileWrapper.appendChild(tile);
@@ -374,7 +374,7 @@ import ButtonPunch from './ButtonPunch.astro';
   .tile-wrapper {
     width: 6.51vmax;
     height: 6.51vmax;
-    
+
     * {
       pointer-events: none;
     }
